@@ -27,9 +27,21 @@ const Calendar = () => {
     setCurrentDate(new Date(year, month + 1, 1));
   };
 
+
+
+  const hasOneTimeDeadline = (dateStr) => {
+    return tasks.some(
+      t => t.date === dateStr && t.oneTime === true && !t.completed
+    );
+  };
+
   // Get date string in YYYY-MM-DD format
   const getDateString = (day) => {
-    return new Date(year, month, day).toISOString().split('T')[0];
+    const date = new Date(year, month, day);
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   };
 
   // Check if date has tasks
@@ -69,12 +81,12 @@ const Calendar = () => {
 
   // Generate calendar days
   const calendarDays = [];
-  
+
   // Empty cells for days before month starts
   for (let i = 0; i < firstDay; i++) {
     calendarDays.push(null);
   }
-  
+
   // Days of the month
   for (let day = 1; day <= daysInMonth; day++) {
     calendarDays.push(day);
@@ -84,7 +96,7 @@ const Calendar = () => {
     <div className="min-h-screen pb-24 bg-gradient-to-br from-dark-950 via-dark-900 to-dark-950">
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-red-950/10 to-dark-950"></div>
-        
+
         <div className="relative px-4 sm:px-6 pt-6 sm:pt-8 pb-6 max-w-md mx-auto">
           {/* Header */}
           <motion.div
@@ -141,7 +153,9 @@ const Calendar = () => {
                   const dateWorkouts = getDateWorkouts(dateStr);
                   const hasTasks = dateTasks.length > 0;
                   const hasWorkouts = dateWorkouts.length > 0;
-                  const allCompleted = dateTasks.length > 0 && 
+                  const hasDeadline = hasOneTimeDeadline(dateStr);
+
+                  const allCompleted = dateTasks.length > 0 &&
                     dateTasks.every(t => t.completed) &&
                     (dateWorkouts.length === 0 || dateWorkouts.every(w => w.completed));
 
@@ -149,13 +163,13 @@ const Calendar = () => {
                     <button
                       key={day}
                       onClick={() => setSelectedDate(dateStr)}
-                      className={`aspect-square rounded-lg transition-all touch-manipulation relative ${
-                        isToday(day)
+                      className={`aspect-square rounded-lg transition-all touch-manipulation relative ${hasDeadline ? 'ring-2 ring-red-500 animate-pulse' : ''
+                        } ${isToday(day)
                           ? 'bg-red-600 text-white font-black border-2 border-red-400'
                           : isSelected(day)
-                          ? 'bg-red-500/30 text-white font-bold border-2 border-red-500'
-                          : 'bg-dark-700 text-gray-300 hover:bg-dark-600 border border-dark-600'
-                      }`}
+                            ? 'bg-red-500/30 text-white font-bold border-2 border-red-500'
+                            : 'bg-dark-700 text-gray-300 hover:bg-dark-600 border border-dark-600'
+                        }`}
                     >
                       <div className="text-sm">{day}</div>
                       <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-0.5">
@@ -201,18 +215,25 @@ const Calendar = () => {
                   {selectedDateTasks.map(task => (
                     <div
                       key={task.id}
-                      className={`flex items-center gap-2 p-2 rounded-lg ${
-                        task.completed
+                      className={`flex items-center gap-2 p-2 rounded-lg ${task.completed
                           ? 'bg-green-500/10 border border-green-500/30'
                           : 'bg-dark-700 border border-dark-600'
-                      }`}
+                        }`}
                     >
                       <div className={`w-2 h-2 rounded-full ${task.completed ? 'bg-green-400' : 'bg-yellow-400'}`} />
-                      <span className={`text-sm flex-1 ${task.completed ? 'text-gray-400 line-through' : 'text-white'}`}>
+                      <span className={`text-sm flex-1 ${task.completed ? 'text-gray-400 line-through' : 'text-white'
+                        }`}>
                         {task.text}
+                        {task.oneTime && !task.completed && (
+                          <span className="ml-2 text-xs text-red-400 font-bold">
+                            (Deadline)
+                          </span>
+                        )}
                       </span>
+
                     </div>
                   ))}
+                  
                 </div>
               </div>
             ) : (
@@ -232,11 +253,10 @@ const Calendar = () => {
                   {selectedDateWorkouts.map(workout => (
                     <div
                       key={workout.id}
-                      className={`p-3 rounded-lg border ${
-                        workout.completed
+                      className={`p-3 rounded-lg border ${workout.completed
                           ? 'bg-green-500/10 border-green-500/30'
                           : 'bg-dark-700 border-dark-600'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2 mb-1">
                         <div className={`w-2 h-2 rounded-full ${workout.completed ? 'bg-green-400' : 'bg-yellow-400'}`} />
@@ -268,4 +288,6 @@ const Calendar = () => {
 };
 
 export default Calendar;
+
+
 
