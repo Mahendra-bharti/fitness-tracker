@@ -142,31 +142,55 @@ export const saveUserProgress = (progress) => {
  * Reset daily tasks (mark all incomplete)
  * Only resets daily tasks, preserves one-time tasks that are still active
  */
+// export const resetDailyTasks = () => {
+//   const tasks = getTasks();
+//   const today = getTodayDate();
+  
+//   // Reset only daily tasks for today
+//   // One-time tasks are only reset when their end date has passed
+//   const resetTasks = tasks.map(task => {
+//     if (task.date === today && task.taskType === 'daily') {
+//       // Reset daily tasks
+//       return { ...task, completed: false, completedAt: null };
+//     } else if (task.taskType === 'one-time' && task.endDate) {
+//       // Remove one-time tasks that have expired
+//       const endDate = new Date(task.endDate);
+//       const todayDate = new Date(today);
+//       if (endDate < todayDate) {
+//         return null; // Mark for removal
+//       }
+//     }
+//     return task;
+//   }).filter(task => task !== null); // Remove expired tasks
+  
+//   saveTasks(resetTasks);
+//   return resetTasks;
+// };
 export const resetDailyTasks = () => {
   const tasks = getTasks();
   const today = getTodayDate();
   
-  // Reset only daily tasks for today
-  // One-time tasks are only reset when their end date has passed
   const resetTasks = tasks.map(task => {
-    if (task.date === today && task.taskType === 'daily') {
-      // Reset daily tasks
-      return { ...task, completed: false, completedAt: null };
+    if (task.taskType === 'daily') {  
+      return { 
+        ...task, 
+        date: today,           // Update date to today
+        completed: false, 
+        completedAt: null 
+      };
     } else if (task.taskType === 'one-time' && task.endDate) {
-      // Remove one-time tasks that have expired
       const endDate = new Date(task.endDate);
       const todayDate = new Date(today);
       if (endDate < todayDate) {
-        return null; // Mark for removal
+        return null; 
       }
     }
     return task;
-  }).filter(task => task !== null); // Remove expired tasks
+  }).filter(task => task !== null);
   
   saveTasks(resetTasks);
   return resetTasks;
 };
-
 /**
  * Clean up old tasks (older than 30 days)
  */
