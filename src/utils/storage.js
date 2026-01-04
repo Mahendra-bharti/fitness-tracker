@@ -3,6 +3,7 @@
  * Handles all data persistence for tasks, user progress, and streaks
  */
 
+
 // Storage keys
 const STORAGE_KEYS = {
   TASKS: 'fitquest_tasks',
