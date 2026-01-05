@@ -44,3 +44,19 @@ export const getTaskStats = (tasks, date) => {
   };
 };
 
+export const isToday = (date) => {
+  const today = new Date().toISOString().split('T')[0];
+  return date === today;
+};
+
+export const isFutureDate = (date) => {
+  return new Date(date) > new Date(getTodayDate());
+};
+
+export const isExpired = (endDate) => {
+  return new Date(endDate) < new Date(getTodayDate());
+};
+
+export const getTodayDate = () => {
+  return new Date().toISOString().split('T')[0];
+};
