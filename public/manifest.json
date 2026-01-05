@@ -11,17 +11,17 @@
   "scope": "/",
 "icons": [
   {
-    "src": "/logUpdate-180.png",
+    "src": "/logUpdate.png",
     "sizes": "180x180",
     "type": "image/png"
   },
   {
-    "src": "/logUpdate-512.png",
+    "src": "/logUpdate.png",
     "sizes": "512x512",
     "type": "image/png"
   },
   {
-    "src": "/logUpdate-1024.png",
+    "src": "/logUpdate.png",
     "sizes": "1024x1024",
     "type": "image/png"
   }
