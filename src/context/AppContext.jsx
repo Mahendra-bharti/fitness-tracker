@@ -41,57 +41,94 @@ export const AppProvider = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [newUnlockedBadges, setNewUnlockedBadges] = useState([]);
   const [levelUpAnimation, setLevelUpAnimation] = useState(false);
+// ADD THIS - Android storage reload fix (lines 61-72)
+useEffect(() => {
+  const handleVisibilityChange = () => {
+    if (!document.hidden) {
+      setTasks(getTasks());
+      setUserProgress(getUserProgress());
+    }
+  };
+  
+  window.addEventListener('visibilitychange', handleVisibilityChange);
+  window.addEventListener('pageshow', handleVisibilityChange);
+  
+  return () => {
+    window.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.removeEventListener('pageshow', handleVisibilityChange);
+  };
+}, []);
 
   // Initialize app data
-  useEffect(() => {
-    const initialize = () => {
-      // Clean up old tasks
-      cleanupOldTasks();
+  // useEffect(() => {
+  //   const initialize = () => {
+  //     // Clean up old tasks
+  //     cleanupOldTasks();
       
-      // Check if daily reset is needed
-      if (shouldResetDaily()) {
-        resetDailyTasks();
-      }
+  //     // Check if daily reset is needed
+  //     if (shouldResetDaily()) {
+  //       resetDailyTasks();
+  //     }
       
-      // Load tasks
-      const loadedTasks = getTasks();
-      setTasks(loadedTasks);
+  //     // Load tasks
+  //     const loadedTasks = getTasks();
+  //     setTasks(loadedTasks);
       
-      // Load user progress
-      const progress = getUserProgress();
-      const today = getTodayDate();
+  //     // Load user progress
+  //     const progress = getUserProgress();
+  //     const today = getTodayDate();
       
-      // Check streak
-      if (progress.lastActiveDate !== today) {
-        const streakUpdate = updateStreak(progress.lastActiveDate, today);
+  //     // Check streak
+  //     if (progress.lastActiveDate !== today) {
+  //       const streakUpdate = updateStreak(progress.lastActiveDate, today);
         
-        if (streakUpdate.lostStreak) {
-          // Apply streak loss penalty
-          const newXP = Math.max(0, progress.xp - (streakUpdate.penaltyXP || 50));
-          const newLevel = calculateLevel(newXP);
-          progress.xp = newXP;
-          progress.level = newLevel;
-          progress.streak = 0;
-        } else if (!streakUpdate.maintain) {
-          progress.streak = (progress.streak || 0) + streakUpdate.streak;
-        }
+  //       if (streakUpdate.lostStreak) {
+  //         // Apply streak loss penalty
+  //         const newXP = Math.max(0, progress.xp - (streakUpdate.penaltyXP || 50));
+  //         const newLevel = calculateLevel(newXP);
+  //         progress.xp = newXP;
+  //         progress.level = newLevel;
+  //         progress.streak = 0;
+  //       } else if (!streakUpdate.maintain) {
+  //         progress.streak = (progress.streak || 0) + streakUpdate.streak;
+  //       }
         
-        progress.lastActiveDate = today;
-        saveUserProgress(progress);
-      }
+  //       progress.lastActiveDate = today;
+  //       saveUserProgress(progress);
+  //     }
       
-      // Recalculate level based on XP
-      const currentLevel = calculateLevel(progress.xp);
-      if (currentLevel !== progress.level) {
-        progress.level = currentLevel;
-      }
+  //     // Recalculate level based on XP
+  //     const currentLevel = calculateLevel(progress.xp);
+  //     if (currentLevel !== progress.level) {
+  //       progress.level = currentLevel;
+  //     }
       
-      setUserProgress(progress);
-      setIsInitialized(true);
-    };
+  //     setUserProgress(progress);
+  //     setIsInitialized(true);
+  //   };
 
-    initialize();
-  }, []);
+  //   initialize();
+  // }, []);
+useEffect(() => {
+  const initialize = () => {
+    // Clean up old tasks
+    cleanupOldTasks();
+    
+    // ✅ ANDROID FIX: Force daily reset EVERY app open
+    const today = getTodayDate();
+    const lastReset = localStorage.getItem('lastResetDate') || '1970-01-01';
+    if (lastReset !== today) {
+      resetDailyTasks();
+      localStorage.setItem('lastResetDate', today);
+    }
+    
+    // Load everything
+    setTasks(getTasks());
+    setUserProgress(getUserProgress());
+    setIsInitialized(true);
+  };
+  initialize();
+}, []);
 
   // Add a new task
   const addTask = useCallback((text, type = 'task', taskType = 'daily', duration = 0, startDate = null) => {
