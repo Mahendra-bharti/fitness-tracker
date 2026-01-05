@@ -3,17 +3,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { getTodayDate, filterTasksByDate } from '../utils/storage';
 import TaskItem from './TaskItem';
-const TaskList = ({ selectedDate = getTodayDate() }) => { 
+const TaskList = () => { 
   const { tasks, toggleTask, deleteTask } = useApp();
 
+   const today = getTodayDate();
+  
   const allTodayTasks = [
-    ...tasks.filter(t => t.taskType === 'daily'),
-    ...tasks.filter(t => t.taskType === 'one-time' && t.date === selectedDate) 
+    ...tasks.filter(t => t.taskType === 'daily'),           // All daily tasks
+    ...tasks.filter(t => t.taskType === 'one-time' && t.date === today)  // Today's one-time
   ];
-
-const completedTasks = allTodayTasks.filter(t => t.completed);
-const pendingTasks = allTodayTasks.filter(t => !t.completed);
-if (allTodayTasks.length === 0) {
+  
+  const pendingTasks = allTodayTasks.filter(t => !t.completed);
+  const completedTasks = allTodayTasks.filter(t => t.completed);
+  
+  if (allTodayTasks.length === 0) {
 
     return (
       <motion.div
