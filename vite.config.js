@@ -20,17 +20,17 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/LogUpadte.png',
+            src: '/download.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/LogUpadte.png',
+            src: '/download.png',
             sizes: '512x512',
             type: 'image/png'
           },
           {
-            src: '/LogUpadte.png',
+            src: '/download.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
