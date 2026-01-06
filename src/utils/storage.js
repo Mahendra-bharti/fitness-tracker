@@ -55,20 +55,15 @@ export const getTodayDate = () => {
 /**
  * Check if we need to reset daily tasks
  */
-// export const shouldResetDaily = () => {
-//   const lastReset = localStorage.getItem(STORAGE_KEYS.LAST_RESET_DATE);
-//   const today = getTodayDate();
-  
-//   if (!lastReset || lastReset !== today) {
-//     localStorage.setItem(STORAGE_KEYS.LAST_RESET_DATE, today);
-//     return true;
-//   }
-//   return false;
-// };
 export const shouldResetDaily = () => {
-  const lastReset = localStorage.getItem('lastResetDate') || '1970-01-01';
+  const lastReset = localStorage.getItem(STORAGE_KEYS.LAST_RESET_DATE);
   const today = getTodayDate();
-  return lastReset !== today;  // Reset every new day
+  
+  if (!lastReset || lastReset !== today) {
+    localStorage.setItem(STORAGE_KEYS.LAST_RESET_DATE, today);
+    return true;
+  }
+  return false;
 };
 
 /**
@@ -171,49 +166,29 @@ export const saveUserProgress = (progress) => {
 //   saveTasks(resetTasks);
 //   return resetTasks;
 // };
-// export const resetDailyTasks = () => {
-//   const tasks = getTasks();
-//   const today = getTodayDate();
-  
-//   const resetTasks = tasks.map(task => {
-//     if (task.taskType === 'daily') {  
-//       return { 
-//         ...task, 
-//         date: today,           // Update date to today
-//         completed: false, 
-//         completedAt: null 
-//       };
-//     } else if (task.taskType === 'one-time' && task.endDate) {
-//       const endDate = new Date(task.endDate);
-//       const todayDate = new Date(today);
-//       if (endDate < todayDate) {
-//         return null; 
-//       }
-//     }
-//     return task;
-//   }).filter(task => task !== null);
-  
-//   saveTasks(resetTasks);
-//   return resetTasks;
-// };
 export const resetDailyTasks = () => {
   const tasks = getTasks();
   const today = getTodayDate();
   
   const resetTasks = tasks.map(task => {
-    if (task.taskType === 'daily') {
+    if (task.taskType === 'daily') {  
       return { 
         ...task, 
-        date: today,
-        completed: false,
+        date: today,           // Update date to today
+        completed: false, 
         completedAt: null 
       };
+    } else if (task.taskType === 'one-time' && task.endDate) {
+      const endDate = new Date(task.endDate);
+      const todayDate = new Date(today);
+      if (endDate < todayDate) {
+        return null; 
+      }
     }
     return task;
-  }).filter(Boolean);
+  }).filter(task => task !== null);
   
   saveTasks(resetTasks);
-  localStorage.setItem('lastResetDate', today);  // 👈 MOBILE KEY
   return resetTasks;
 };
 /**
