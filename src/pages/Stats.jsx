@@ -2,12 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { BarChart3, Target, Award, Calendar } from 'lucide-react';
-import { getTasks, getTodayDate } from '../utils/storage';
+import { getTodayDate } from '../utils/storage';
 import { getTaskStats } from '../utils/taskHelpers';
 
 const Stats = () => {
-  const { userProgress } = useApp();
-  const tasks = getTasks();
+   const { userProgress, tasks } = useApp();
   const today = getTodayDate();
   const todayStats = getTaskStats(tasks, today);
 
