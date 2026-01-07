@@ -292,16 +292,14 @@ export const resetDailyTasks = () => {
 
   if (lastReset !== today) {
     const updated = tasks.map(task => {
-      // ✅ DAILY TASK RESET + DATE UPDATE
       if (task.taskType === 'daily') {
         return {
           ...task,
           completed: false,
-          date: today   // ⭐⭐⭐ THIS IS THE FIX ⭐⭐⭐
+          date: today
         };
       }
 
-      // One-time task expiry
       if (
         task.taskType === 'one-time' &&
         task.endDate &&
@@ -320,6 +318,7 @@ export const resetDailyTasks = () => {
 
   return tasks;
 };
+
 
 
 export const cleanupOldTasks = () => getTasks();
