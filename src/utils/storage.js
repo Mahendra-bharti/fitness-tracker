@@ -256,6 +256,35 @@ export const saveUserProgress = (progress) => {
 /**
  * ✅ Daily reset + one-time expiry marking
  */
+// export const resetDailyTasks = () => {
+//   const tasks = getTasks();
+//   const today = getTodayDate();
+//   const lastReset = localStorage.getItem(STORAGE_KEYS.LAST_RESET_DATE);
+
+//   if (lastReset !== today) {
+//     const updated = tasks.map(task => {
+//       if (task.taskType === 'daily') {
+//         return { ...task, completed: false };
+//       }
+
+//       if (
+//         task.taskType === 'one-time' &&
+//         task.endDate &&
+//         today > task.endDate
+//       ) {
+//         return { ...task, isExpired: true };
+//       }
+
+//       return task;
+//     });
+
+//     saveTasks(updated);
+//     localStorage.setItem(STORAGE_KEYS.LAST_RESET_DATE, today);
+//     return updated;
+//   }
+
+//   return tasks;
+// };
 export const resetDailyTasks = () => {
   const tasks = getTasks();
   const today = getTodayDate();
@@ -263,14 +292,20 @@ export const resetDailyTasks = () => {
 
   if (lastReset !== today) {
     const updated = tasks.map(task => {
+      // ✅ DAILY TASK RESET + DATE UPDATE
       if (task.taskType === 'daily') {
-        return { ...task, completed: false };
+        return {
+          ...task,
+          completed: false,
+          date: today   // ⭐⭐⭐ THIS IS THE FIX ⭐⭐⭐
+        };
       }
 
+      // One-time task expiry
       if (
         task.taskType === 'one-time' &&
         task.endDate &&
-        today > task.endDate
+        new Date(today) > new Date(task.endDate)
       ) {
         return { ...task, isExpired: true };
       }
@@ -285,5 +320,6 @@ export const resetDailyTasks = () => {
 
   return tasks;
 };
+
 
 export const cleanupOldTasks = () => getTasks();
