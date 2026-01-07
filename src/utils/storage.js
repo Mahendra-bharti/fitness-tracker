@@ -216,8 +216,12 @@ const STORAGE_KEYS = {
   LAST_RESET_DATE: 'fitquest_last_reset_date',
 };
 
-export const getTodayDate = () =>
-  new Date().toISOString().split('T')[0];
+export const getTodayDate = () => {
+  const d = new Date();
+  const localDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return localDate.toISOString().split('T')[0];
+};
+
 
 export const getTasks = () => {
   try {
