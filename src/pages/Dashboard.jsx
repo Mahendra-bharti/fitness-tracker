@@ -8,6 +8,7 @@ import AddTaskModal from '../components/AddTaskModal';
 import LevelUpModal from '../components/LevelUpModal';
 import BadgeUnlockModal from '../components/BadgeUnlockModal';
 import { getMotivationalMessage } from '../utils/gamification';
+import DisciplineCard from '../components/DisciplineCard';
 
 const Dashboard = () => {
   const {
@@ -37,14 +38,14 @@ const Dashboard = () => {
         {/* Animated background effects */}
         <div className="absolute inset-0 bg-gradient-to-br from-red-900/30 via-red-950/20 to-dark-950"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.1),transparent_50%)]"></div>
-        
+
         <div className="relative px-4 sm:px-6 pt-6 sm:pt-8 pb-6 text-white">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="max-w-md mx-auto"
           >
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="text-4xl sm:text-5xl font-black mb-2 bg-gradient-to-r from-red-500 via-red-600 to-red-700 bg-clip-text text-transparent"
@@ -95,6 +96,16 @@ const Dashboard = () => {
                 needed={xpProgress.needed}
                 percentage={xpProgress.percentage}
               />
+              {/* Discipline / Aura Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="mt-6"
+              >
+                <DisciplineCard progress={userProgress} />
+              </motion.div>
+
             </motion.div>
           </motion.div>
         </div>
@@ -135,7 +146,7 @@ const Dashboard = () => {
 
       <BadgeUnlockModal
         badges={newUnlockedBadges}
-        onClose={() => {}}
+        onClose={() => { }}
       />
     </div>
   );

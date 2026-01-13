@@ -17,6 +17,12 @@ export const getXPForLevel = (level) => {
   return Math.floor(BASE_XP_FOR_LEVEL * Math.pow(XP_MULTIPLIER, level - 2));
 };
 
+
+export const getAuraReward = (taskType) => {
+  return taskType === 'fitness' ? 5 : 0;
+};
+
+
 /**
  * Calculate total XP needed to reach a level
  */
